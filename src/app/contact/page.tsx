@@ -8,7 +8,7 @@ export default function Contact() {
       <div className="max-w-2xl w-full py-32 bg-white rounded-xl shadow-xl p-8 md:p-12 mb-0 pb-0">
         <h1 className="text-4xl font-bold text-center text-sky-700 mb-6">Contact Us</h1>
         <p className="text-center text-gray-600 mb-10 text-base md:text-lg">
-          We're excited to connect with you! Whether you're passionate about sustainability, curious about tech, or want to collaborate — don't hesitate to reach out.
+          We are excited to connect with you! Whether you are passionate about sustainability, curious about tech, or want to collaborate — do not hesitate to reach out.
         </p>
 
         <div className="space-y-8">

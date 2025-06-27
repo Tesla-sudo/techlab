@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { Bars3Icon, XMarkIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/16/solid';
-import { usePathname } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
+
+import { useState, useRef } from 'react';
 
 const Navbar = () => {
-    const pathname = usePathname();
+    
     const [menuOpen, setMenuOpen] = useState(false);
-    const [isOpen, setIsOpen] = useState(true);
+    
     const [showDropdown, setShowDropdown] = useState(false);
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
