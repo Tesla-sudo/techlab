@@ -1,32 +1,45 @@
 import { categoryContent } from "@/lib/content";
+import { Metadata } from "next";
 
 export const dynamicParams = true;
 
-export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
+export async function generateStaticParams(): Promise<Array<{ slug: string[] }>> {
   return Object.keys(categoryContent).map((key) => ({
-    slug: key.split('/'),
+    slug: key.split("/"),
   }));
 }
 
-type Props = {
-  params: { slug: string[] };
+type PageProps = {
+  params: {
+    slug: string[];
+  };
 };
 
-export default async function Page({ params }: Props) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const slugPath = params.slug.join("/");
+  const content = categoryContent[slugPath];
 
+  return {
+    title: content?.title || "Category",
+    description: content?.description || "Explore our content.",
+  };
+}
+
+export default async function Page({ params }: PageProps) {
+  const slugPath = params.slug.join("/");
   let content = categoryContent[slugPath];
 
+  // fallback for sustainability sub-paths
   if (!content && params.slug[0] === "sustainability") {
-    const topic = params.slug.at(-1) || "sustainability";
-    content = categoryContent[topic];
+    const fallbackKey = params.slug.at(-1) || "sustainability";
+    content = categoryContent[fallbackKey];
   }
 
   if (!content) {
     return (
-      <div className="p-8">
-        <h2>Category not found</h2>
-        <p>The requested category does not exist.</p>
+      <div className="min-h-screen p-8">
+        <h2 className="text-2xl font-semibold">Category not found</h2>
+        <p className="text-gray-600">The requested category does not exist.</p>
       </div>
     );
   }
@@ -46,4 +59,5 @@ export default async function Page({ params }: Props) {
     </div>
   );
 }
+
 
