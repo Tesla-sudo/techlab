@@ -1,22 +1,18 @@
-// src/app/categories/[...slug]/page.tsx
 import { categoryContent } from "@/lib/content";
 
-interface PageProps {
-  params: {
-    slug: string[];
-  };
-}
+export const dynamicParams = true;
 
-export async function generateStaticParams(): Promise<
-  { slug: string[] }[]
-> {
-  const paths = Object.keys(categoryContent).map((key) => ({
-    slug: key.split("/"),
+export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
+  return Object.keys(categoryContent).map((key) => ({
+    slug: key.split('/'),
   }));
-  return paths;
 }
 
-export default async function Page({ params }: PageProps) {
+type Props = {
+  params: { slug: string[] };
+};
+
+export default async function Page({ params }: Props) {
   const slugPath = params.slug.join("/");
 
   let content = categoryContent[slugPath];
@@ -30,7 +26,7 @@ export default async function Page({ params }: PageProps) {
     return (
       <div className="p-8">
         <h2>Category not found</h2>
-        <p>The requested category does not exist. Please check the URL.</p>
+        <p>The requested category does not exist.</p>
       </div>
     );
   }
@@ -42,16 +38,10 @@ export default async function Page({ params }: PageProps) {
       : "bg-white text-black";
 
   return (
-    <div
-      className={`min-h-screen px-6 space-y-2 py-12 md:px-16 lg:px-24 pt-18 ${pageClass}`}
-    >
-      <div className="max-w-4xl mx-auto space-y-2">
-        <h1 className="text-4xl font-extrabold mb-6 capitalize tracking-tight">
-          {content.title}
-        </h1>
-        <p className="text-lg leading-relaxed text-gray-800">
-          {content.description}
-        </p>
+    <div className={`min-h-screen px-6 py-12 ${pageClass}`}>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-extrabold mb-6">{content.title}</h1>
+        <p className="text-lg text-gray-800">{content.description}</p>
       </div>
     </div>
   );
