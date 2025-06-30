@@ -35,7 +35,7 @@ export default function Home() {
           <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
             <h3 className="text-xl font-semibold text-sky-700 mb-2">Green Tech Education</h3>
             <p>
-              Access resources that teach how to build eco-friendly web applications, understand tech’s impact on the planet, and explore sustainable coding practices.
+              Access resources that teach how to build eco-friendly web applications, understand tech&rsquo;s impact on the planet, and explore sustainable coding practices.
             </p>
           </div>
 
