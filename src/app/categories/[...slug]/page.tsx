@@ -2,10 +2,15 @@
 import { notFound } from 'next/navigation';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import CodeBlock from '@/Components/Code/CodeBlock'; // Adjust to match your folder casing
+import CodeBlock from '@/Components/Code/CodeBlock';
+
+// --- Types ---
+interface Params {
+  slug: string[];
+}
 
 // --- Static Blog Data ---
-const blogData: { [key: string]: string } = {
+const blogData: Record<string, string> = {
   'green-energy': `
 # Green Energy Innovations and their Impact
 
@@ -81,7 +86,7 @@ Using eco-conscious products reduces landfill waste, supports ethical brands, an
 };
 
 // --- Metadata Mapping ---
-const topicMap: { [key: string]: string } = {
+const topicMap: Record<string, string> = {
   'green-energy': 'Green Energy Innovations and their Impact',
   'sustainable-living': 'Practical Steps for Sustainable Living',
   'climate-change': 'Understanding and Addressing Climate Change',
@@ -97,9 +102,8 @@ export async function generateStaticParams() {
 }
 
 // --- Metadata (SEO) ---
-export async function generateMetadata({ params }: { params: { slug: string[] } }) {
-  const awaitedParams = await (params as any);
-  const subTopicSlug = awaitedParams.slug.at(-1);
+export async function generateMetadata({ params }: { params: Params }) {
+  const subTopicSlug = params.slug.at(-1);
   const mappedTopic = subTopicSlug ? topicMap[subTopicSlug] : undefined;
 
   return {
@@ -111,10 +115,9 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
 }
 
 // --- Page Component ---
-export default async function Page({ params }: { params: { slug: string[] } }) {
-  const awaitedParams = await (params as any);
-  const fullSlug = awaitedParams.slug.join('/');
-  const subTopicSlug = awaitedParams.slug.at(-1);
+export default async function Page({ params }: { params: Params }) {
+  const fullSlug = params.slug.join('/');
+  const subTopicSlug = params.slug.at(-1);
 
   if (!subTopicSlug || !blogData[subTopicSlug]) {
     notFound();
@@ -129,8 +132,6 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
 
   return (
     <div className={`min-h-screen ${pageClass}`}>
-     
-
       {/* --- Main Content + Resources --- */}
       <main className="container mx-auto px-4 py-12">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -140,20 +141,22 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
             <Markdown
               remarkPlugins={[remarkGfm]}
               components={{
-                code({ node, className, children, ...props }) {
+                code({ className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '');
                   return match ? (
                     <CodeBlock language={match[1]} value={String(children).replace(/\n$/, '')} />
                   ) : (
-                    <code className={className} {...props}>{children}</code>
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
                   );
                 },
-                h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-sky-700 mt-6 mb-3" {...props} />,
-                h3: ({ node, ...props }) => <h3 className="text-xl font-semibold text-sky-600 mt-4 mb-2" {...props} />,
-                p: ({ node, ...props }) => <p className="mb-3" {...props} />,
-                ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-3" {...props} />,
-                ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-3" {...props} />,
-                strong: ({ node, ...props }) => <strong className="font-bold text-sky-900" {...props} />,
+                h2: (props) => <h2 className="text-2xl font-bold text-sky-700 mt-6 mb-3" {...props} />,
+                h3: (props) => <h3 className="text-xl font-semibold text-sky-600 mt-4 mb-2" {...props} />,
+                p: (props) => <p className="mb-3" {...props} />,
+                ul: (props) => <ul className="list-disc pl-6 mb-3" {...props} />,
+                ol: (props) => <ol className="list-decimal pl-6 mb-3" {...props} />,
+                strong: (props) => <strong className="font-bold text-sky-900" {...props} />,
               }}
             >
               {blogContent}
@@ -169,6 +172,8 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
                   href="https://doi.org/10.1007/s11625-018-0627-5"
                   download
                   className="underline hover:text-sky-900 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   🌱 Green Energy Guide (PDF)
                 </a>
@@ -178,6 +183,8 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
                   href="https://www.researchgate.net/publication/47697344_What_is_Sustainability"
                   download
                   className="underline hover:text-sky-900 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   🏡 Sustainable Living Checklist (PDF)
                 </a>
@@ -187,6 +194,8 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
                   href="https://doi.org/10.1007/s11625-018-0627-5"
                   download
                   className="underline hover:text-sky-900 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   🌍 Climate Change Factsheet (PDF)
                 </a>
@@ -196,6 +205,8 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
                   href="https://doi.org/10.1007/s11625-018-0627-5"
                   download
                   className="underline hover:text-sky-900 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   ♻️ Eco-Friendly Products Catalog (PDF)
                 </a>
@@ -204,11 +215,9 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
           </aside>
         </div>
       </main>
-
-      {/* --- Footer --- */}
-     
     </div>
   );
 }
+
 
 

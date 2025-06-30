@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function Featured() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -78,8 +79,8 @@ export default function Featured() {
 
       {/* Arrow buttons */}
       <div className="flex justify-between items-center mb-4 px-6 md:px-16">
-        <button onClick={scrollLeft} className="text-2xl">←</button>
-        <button onClick={scrollRight} className="text-2xl">→</button>
+        <button onClick={scrollLeft} className="text-2xl" aria-label="Scroll Left">←</button>
+        <button onClick={scrollRight} className="text-2xl" aria-label="Scroll Right">→</button>
       </div>
 
       {/* Scrollable carousel */}
@@ -93,13 +94,15 @@ export default function Featured() {
               key={idx}
               className="snap-start flex-shrink-0 w-full md:w-[280px] max-w-full md:mx-2 bg-green-100 p-6 rounded-xl shadow-md"
             >
-              <img
+              <Image
                 src={youth.image}
                 alt={youth.name}
-                className="w-24 h-24 object-cover rounded-full mx-auto mb-3"
+                width={96}   // 24 * 4 (tailwind w-24 = 6rem = 96px)
+                height={96}
+                className="object-cover rounded-full mx-auto mb-3"
               />
               <h2 className="text-xl font-semibold text-center text-black">{youth.name}</h2>
-              <p className="text-sm text-gray-700 mt-1 text-center">{youth.testimonial}</p>
+              <p className="text-sm text-gray-700 mt-1 text-center" dangerouslySetInnerHTML={{ __html: youth.testimonial }} />
             </div>
           ))}
         </div>
@@ -110,7 +113,9 @@ export default function Featured() {
         {featuredYouths.map((_, index) => (
           <div
             key={index}
-            className={`w-3 h-3 rounded-full border border-gray-400 transition ${index === activeIndex ? 'bg-green-600' : 'bg-transparent'}`}
+            className={`w-3 h-3 rounded-full border border-gray-400 transition ${
+              index === activeIndex ? 'bg-green-600' : 'bg-transparent'
+            }`}
           ></div>
         ))}
       </div>
