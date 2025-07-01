@@ -4,11 +4,6 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import CodeBlock from '@/Components/Code/CodeBlock';
 
-// --- Types ---
-interface Params {
-  slug: string[];
-}
-
 // --- Static Blog Data ---
 const blogData: Record<string, string> = {
   'green-energy': `
@@ -26,6 +21,7 @@ Wind farms are becoming a common sight, harnessing natural airflow to produce cl
 - Wind turbines
 - Hydroelectric dams
 `,
+
   'sustainable-living': `
 # Practical Steps for Sustainable Living
 
@@ -41,6 +37,7 @@ Fix leaks and install low-flow fixtures to save water.
 - Buy local products
 - Use public transportation
 `,
+
   'climate-change': `
 # Understanding and Addressing Climate Change
 
@@ -60,6 +57,7 @@ Every action counts. Governments, businesses, and individuals all have a role to
 - Reduce meat consumption
 - Use energy-efficient appliances
 `,
+
   'eco-friendly-products': `
 # Exploring the World of Eco-Friendly Products
 
@@ -95,19 +93,24 @@ const topicMap: Record<string, string> = {
 
 // --- Static Params ---
 export async function generateStaticParams() {
-  const sustainabilityTopics = Object.keys(topicMap);
-  return sustainabilityTopics.map((topic) => ({
+  return Object.keys(topicMap).map((topic) => ({
     slug: ['sustainability', topic],
   }));
 }
 
 // --- Metadata (SEO) ---
-export async function generateMetadata({ params }: { params: Params }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string[] };
+}) {
   const subTopicSlug = params.slug.at(-1);
   const mappedTopic = subTopicSlug ? topicMap[subTopicSlug] : undefined;
 
   return {
-    title: mappedTopic ? `${mappedTopic} | Sustainability Blog` : 'Sustainability Blog',
+    title: mappedTopic
+      ? `${mappedTopic} | Sustainability Blog`
+      : 'Sustainability Blog',
     description: mappedTopic
       ? `Read a comprehensive blog post about ${mappedTopic} and its impact on sustainability.`
       : 'Explore various topics related to sustainability and green living.',
@@ -115,7 +118,11 @@ export async function generateMetadata({ params }: { params: Params }) {
 }
 
 // --- Page Component ---
-export default async function Page({ params }: { params: Params }) {
+export default async function Page({
+  params,
+}: {
+  params: { slug: string[] };
+}) {
   const fullSlug = params.slug.join('/');
   const subTopicSlug = params.slug.at(-1);
 
@@ -132,27 +139,34 @@ export default async function Page({ params }: { params: Params }) {
 
   return (
     <div className={`min-h-screen ${pageClass}`}>
-      {/* --- Main Content + Resources --- */}
       <main className="container mx-auto px-4 py-12">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* --- Blog Content --- */}
           <article className="prose lg:prose-xl flex-1 bg-white rounded-lg p-6 shadow-sm border border-sky-300">
-            <h1 className="text-4xl font-extrabold text-sky-800 mb-6">{pageTitle}</h1>
+            <h1 className="text-4xl font-extrabold text-sky-800 mb-6">
+              {pageTitle}
+            </h1>
             <Markdown
               remarkPlugins={[remarkGfm]}
               components={{
                 code({ className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '');
                   return match ? (
-                    <CodeBlock language={match[1]} value={String(children).replace(/\n$/, '')} />
+                    <CodeBlock
+                      language={match[1]}
+                      value={String(children).replace(/\n$/, '')}
+                    />
                   ) : (
                     <code className={className} {...props}>
                       {children}
                     </code>
                   );
                 },
-                h2: (props) => <h2 className="text-2xl font-bold text-sky-700 mt-6 mb-3" {...props} />,
-                h3: (props) => <h3 className="text-xl font-semibold text-sky-600 mt-4 mb-2" {...props} />,
+                h2: (props) => (
+                  <h2 className="text-2xl font-bold text-sky-700 mt-6 mb-3" {...props} />
+                ),
+                h3: (props) => (
+                  <h3 className="text-xl font-semibold text-sky-600 mt-4 mb-2" {...props} />
+                ),
                 p: (props) => <p className="mb-3" {...props} />,
                 ul: (props) => <ul className="list-disc pl-6 mb-3" {...props} />,
                 ol: (props) => <ol className="list-decimal pl-6 mb-3" {...props} />,
@@ -163,9 +177,10 @@ export default async function Page({ params }: { params: Params }) {
             </Markdown>
           </article>
 
-          {/* --- Downloadable Resources --- */}
           <aside className="flex-1 bg-white p-6 rounded-lg shadow-sm border border-sky-300 h-fit">
-            <h2 className="text-2xl font-bold text-sky-800 mb-4">Downloadable Resources</h2>
+            <h2 className="text-2xl font-bold text-sky-800 mb-4">
+              Downloadable Resources
+            </h2>
             <ul className="space-y-4 text-sky-700">
               <li>
                 <a
@@ -218,6 +233,7 @@ export default async function Page({ params }: { params: Params }) {
     </div>
   );
 }
+
 
 
 
